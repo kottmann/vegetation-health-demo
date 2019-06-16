@@ -1,8 +1,10 @@
 import apache_beam as beam
+import tensorflow as tf
 
 class ParseTFRecord(beam.DoFn):
 
     def __init__(self, featuresDict, label):
+        super(ParseTFRecord, self).__init__()
         self.featuresDict = featuresDict
         self.label = label
 

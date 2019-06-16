@@ -19,16 +19,16 @@ import ParseTFRecord
 
 def run(argv=None):
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--input',
-    #                    dest='input',
-    #                    help='Input folder to process.')
+    parser.add_argument('--input',
+                        dest='input',
+                        help='Input folder to process.')
     #parser.add_argument('--output',
     #                    dest='output',
     #                    required=True,
     #                    help='Output folder to write results to.')
-    #parser.add_argument('--models',
-    #                    dest='models',
-    #                    help='Input folder to read model parameters.')
+    parser.add_argument('--models',
+                        dest='models',
+                        help='Input folder to read model parameters.')
     #parser.add_argument('--batchsize',
     #                    dest='batchsize',
     #                    help='Batch size for processing')
@@ -40,7 +40,7 @@ def run(argv=None):
     pipeline_options.view_as(SetupOptions).save_main_session = True
     pipeline_options.view_as(StandardOptions).streaming = True
 
-    outputBucket = "/home/burn/Downloads/ee-docs-demos-berlin"
+    outputBucket = known_args.input
 
     # Names for output files.
     testFilePrefix = 'Testing_demo_'
@@ -121,14 +121,12 @@ def run(argv=None):
 
     with beam.Pipeline(options=pipeline_options) as p:
         examples = (p | 'ReadExamples' >> tfrecordio.ReadFromTFRecord(
-            file_pattern="/home/burn/Downloads/ee-docs-demos-berlin/Image_pixel_demo_*.tfrecord.gz",
+            file_pattern="../../data/Image_pixel_demo_*.tfrecord.gz",
             compression_type=CompressionTypes.GZIP)
                     | 'ParseTFRecord' >> beam.ParDo(ParseTFRecord.ParseTFRecord(featuresDict, label))
                     | "print" >> beam.Map(print))
 
-        # Do we need to filter anything here?
 
-        result = p.run()
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
